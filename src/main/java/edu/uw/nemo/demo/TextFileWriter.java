@@ -1,11 +1,4 @@
-package smun;
-
-
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package edu.uw.nemo.demo;
 
 
 
@@ -31,6 +24,7 @@ import cern.colt.function.*;
 import java.util.*;
 import edu.uci.ics.jung.algorithms.util.Indexer;
 import cern.jet.math.Functions;
+
 /**
  *
  * @author Wooyoung

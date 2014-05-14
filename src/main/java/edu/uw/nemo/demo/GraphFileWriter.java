@@ -1,22 +1,10 @@
-package smun;
-
-
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
+package edu.uw.nemo.demo;
 
 
 /**
  *
  * @author Wooyoung
  */
-
-
-
-
 
 import edu.uci.ics.jung.io.*;
 import edu.uci.ics.jung.graph.*;

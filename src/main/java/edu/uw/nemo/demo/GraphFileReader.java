@@ -1,13 +1,4 @@
-package smun;
-
-
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
+package edu.uw.nemo.demo;
 
 
 import edu.uci.ics.jung.io.*;
@@ -36,17 +27,14 @@ public class GraphFileReader {
     
     private String filename;
     private boolean directed;
-        
-  
-    
-       
+
     public GraphFileReader(String name)
     {
         filename = name;
        
     };
     
-     public GraphFileReader()
+    public GraphFileReader()
     {
          directed = false;
     };
@@ -55,8 +43,6 @@ public class GraphFileReader {
     {
         return directed;
     }
-   
-   
     
     public Graph readTXTfile(boolean dir) throws Exception{
         
@@ -105,17 +91,13 @@ public class GraphFileReader {
                e.getStackTrace();
             }
        }
-              
- 
+
         reader.close();
         
       // System.out.println("G: = " + g + " E=" +  g.getEdgeCount() + "  V = " + g.getVertexCount());
         return g;
     }
-    
-   
-    
-  
+
     public Graph readPajetNet() throws Exception{
         
         int idx = filename.indexOf("directed");
@@ -147,15 +129,13 @@ public class GraphFileReader {
 			System.err.println(ioe);
 		}
 	return g;
-        
       
     }
     
     public Graph readGraphML() throws Exception{
         
         Graph g;
-     
-        
+
         g = new DirectedSparseMultigraph();
         
         Factory<String> vertexFactory = new Factory<String>() {
@@ -163,13 +143,11 @@ public class GraphFileReader {
          public String create() { return Integer.toString(vn++); }
         };
         
-   
         Factory<Integer> edgeFactory = new Factory<Integer>() {
          int en = 0;
          public Integer create() { return en++; }
         };
         
-    
     	GraphMLReader gmlr = new GraphMLReader(vertexFactory, edgeFactory);
     	
     	gmlr.load(filename, g);
@@ -193,26 +171,16 @@ public class GraphFileReader {
          
          return g;
     }
-    
-    
-    
+
        public static void main(String[] args) throws Exception{  
     
            /** The main function is just a test function*/
            
        GraphFileReader myReader = new GraphFileReader("Scere20140117CR.txt");
-               
-        
-          
+
        Graph g=myReader.fileRead(false);
        System.out.println("|V| = " + g.getVertexCount() + ", |E|=" + g.getEdgeCount());
-       
-
-   
-        
        }
-    
-   
-    
+
 }
 

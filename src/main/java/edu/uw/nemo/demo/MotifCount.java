@@ -1,25 +1,9 @@
-package smun;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+package edu.uw.nemo.demo;
 
 
-
-/**
- *
- * @author Wooyoung
- */
-/**
- *
- * @author Wooyoung
- */
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import edu.uci.ics.jung.algorithms.matrix.GraphMatrixOperations.*;
-import java.lang.Object.*;
 import java.util.*;
 import edu.uci.ics.jung.graph.util.Pair;
 import edu.uci.ics.jung.algorithms.filters.FilterUtils;
@@ -32,14 +16,12 @@ import java.util.Set;
 
 import edu.uci.ics.jung.graph.*;
 import cern.colt.matrix.DoubleMatrix2D;
-import edu.uci.ics.jung.algorithms.matrix.GraphMatrixOperations.*;
 import edu.uci.ics.jung.algorithms.matrix.*;
 import edu.uci.ics.jung.algorithms.util.Indexer;
-import edu.uci.ics.jung.graph.event.GraphEvent.Vertex;
 
 
 import org.apache.commons.collections15.BidiMap;
-import static smun.SMUNutil.nConnectedComponents;
+
 /**
  *
  * @author Wooyoung

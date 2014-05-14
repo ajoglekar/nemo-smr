@@ -1,16 +1,4 @@
-package smun;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-
-
-/**
- *
- * @author Wooyoung
- */
+package edu.uw.nemo.demo;
 
 
 import java.util.Map;
@@ -26,8 +14,6 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.algorithms.matrix.*;
 
 import java.io.*;
-
-
 
 /**
  *

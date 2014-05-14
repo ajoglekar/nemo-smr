@@ -1,11 +1,5 @@
-package smun;
+package edu.uw.nemo.demo;
 
-
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 
 import edu.uci.ics.jung.io.*;
@@ -339,7 +333,7 @@ public class TextFileReader {
             }
             System.out.println("Both classes = " + i);
          
-             TextFileWriter writer = new TextFileWriter(path + "Acencio_PPI_new class_list.txt");
+            TextFileWriter writer = new TextFileWriter(path + "Acencio_PPI_new class_list.txt");
             writer.writeList2Txtfile(newclass);
             
                        
