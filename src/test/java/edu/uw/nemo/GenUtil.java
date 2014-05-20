@@ -36,4 +36,10 @@ public class GenUtil {
         System.out.println("\ntotal [" + actual.size() + "] elements.");
     }
 
+    public void print(byte[] actual) {
+        for (int j = 0; j < actual.length; j++) {
+            System.out.print(actual[j] + " ");
+        }
+        System.out.println("");
+    }
 }

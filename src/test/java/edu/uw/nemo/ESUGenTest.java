@@ -24,6 +24,10 @@ public class ESUGenTest {
         List<int[]> actual2 = target.enumerateSubgraphs(input, 3);
         assertEquals(16, actual2.size());
 //        genUtil.printCombinations(actual2);
+
+        List<int[]> actual3 = target.enumerateSubgraphs(input, 4);
+        assertEquals(24, actual3.size());
+        genUtil.printCombinations(actual3);
     }
 
 }
