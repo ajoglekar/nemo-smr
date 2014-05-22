@@ -35,30 +35,33 @@ public class GraphFormat {
         }
         
         byte[] Nn = getBytesRepresentationOfN(this.vertexCount);
-        int formattedGraphSize = Nn.length +
-                                 (this.vertexCount * (this.vertexCount - 1))/6 +
-                                 (this.vertexCount * (this.vertexCount - 1)) % 6 > 0 ? 1 : 0;
+        int formattedGraphSize = Nn.length + this.getByteCountForFormattedGraph();
         this.formattedGraph = new byte[formattedGraphSize];
         System.arraycopy(Nn, 0, this.formattedGraph, 0, Nn.length);
         
-        int bitPos = 0;
-        int formattedGraphNextIndex = Nn.length;
-        byte formattedGraphNextByte = 0;
-        for (int col = 1; col < this.vertexCount; ++col) {
-            for (int row = 0; row < col; ++row) {
-                if (adjMatrix[row][col]) {
-                    formattedGraphNextByte = (byte) (formattedGraphNextByte | (1 << bitPos));
-                }
-                
-                bitPos = (bitPos + 1) % 6;
-                if (bitPos == 0) {
-                    this.formattedGraph[formattedGraphNextIndex++] = formattedGraphNextByte;
-                    formattedGraphNextByte = 0;
+        if (this.formatType == FormatType.Graph6) {
+            int bitPos = 0;
+            int formattedGraphNextIndex = Nn.length;
+            byte formattedGraphNextByte = 0;
+            for (int col = 1; col < this.vertexCount; ++col) {
+                for (int row = 0; row < col; ++row) {
+                    if (adjMatrix[row][col]) {
+                        formattedGraphNextByte = (byte) (formattedGraphNextByte | (1 << (5 - bitPos)));
+                    }
+
+                    bitPos = (bitPos + 1) % 6;
+                    if (bitPos == 0) {
+                        this.formattedGraph[formattedGraphNextIndex++] = (byte) (formattedGraphNextByte + 63);
+                        formattedGraphNextByte = 0;
+                    }
                 }
             }
+
+            this.formattedGraph[formattedGraphNextIndex] = (byte) (formattedGraphNextByte + 63);
         }
-        
-        this.formattedGraph[formattedGraphNextIndex] = formattedGraphNextByte;
+        else {
+            // TODO: Implement for FormatType.Sparse6
+        }
     }
     
     public byte[] getBytes() {
@@ -99,6 +102,17 @@ public class GraphFormat {
             return false;
         }
         return true;
+    }
+    
+    private int getByteCountForFormattedGraph() {
+        if (this.formatType == FormatType.Graph6) {
+            int temp = this.vertexCount * (this.vertexCount - 1) / 2;
+            return temp/6 + ((temp % 6) > 0 ? 1 : 0);
+        }
+        else {
+            // TODO: Implement of FormatType.Sparse6
+            return 0;
+        }
     }
     
     private static byte[] getBytesRepresentationOfN(int n) {
