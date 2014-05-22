@@ -8,9 +8,8 @@ package edu.uw.nemo.labeler;
 
 /**
  *
- * @author vartikav
+ * @author harshv
  */
-public enum FormatType {
-    Graph6,
-    Sparse6
+public class GraphFormatTest {
+    
 }
