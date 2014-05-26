@@ -1,4 +1,4 @@
-package edu.uw.nemo;
+package edu.uw.nemo.proto;
 
 import java.util.ArrayList;
 import java.util.HashSet;

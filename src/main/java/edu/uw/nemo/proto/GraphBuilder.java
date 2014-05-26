@@ -1,4 +1,4 @@
-package edu.uw.nemo;
+package edu.uw.nemo.proto;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;

@@ -1,4 +1,4 @@
-package edu.uw.nemo;
+package edu.uw.nemo.proto;
 
 import org.junit.Test;
 
