@@ -6,6 +6,15 @@
 
 package edu.uw.nemo.labeler;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -15,7 +24,7 @@ import java.util.*;
 // Creates the canonical labelling for a given graph using nauty library's tool labelg.exe
 public class GraphLabel {
     public GraphLabel() {
-        this.subGraphs = new HashMap<GraphFormat, Integer>();
+        this.subGraphs = new LinkedHashMap<GraphFormat, Integer>();
     }
     
     public void addSubGraph(List<int[]> edges, int vertexCount) {
@@ -51,11 +60,100 @@ public class GraphLabel {
     }
     
     private static Map<GraphFormat, String> generateCanonicalLabels(Set<GraphFormat> graphFormats) {
-        // TODO: Create a file with all the entries from graphFormats, one at each line.
-        // TODO: Call labelg.exe via Runtime.getRuntime ().exec with the file formed and a output file.
-        // TODO: Read the outputfile to get the canonical label for each graphFormat
-        return new HashMap<GraphFormat, String>();
+        // Create a file with all the entries from graphFormats, one at each line.
+        BufferedWriter graphWriter = null;
+        try {
+            graphWriter = new BufferedWriter(new FileWriter(LabelGInputFile));
+            for (GraphFormat graph : graphFormats) {
+                graphWriter.write(graph.toString());
+                graphWriter.write('\n');
+            }
+        }
+        catch (IOException ioe) {
+            System.err.println("Error while writing graphs for labelg. Error msg: " + ioe.getMessage());
+            return null;
+        }
+        finally {
+            if (graphWriter != null) {
+                try {
+                    graphWriter.close();
+                }
+                catch (IOException ioe) {
+                    System.err.println("Error while writing graphs for labelg. Error msg: " + ioe.getMessage());
+                    return null;
+                }
+            }
+        }
+        
+        // Call labelg.exe with the file formed and a output file.
+        try {
+            String[] args = {"labelg.exe", "-i3", "-I1:100", LabelGInputFile, LabelGOutputFile};
+            Process labelg = Runtime.getRuntime().exec(args);
+            
+            OutputStream out = labelg.getOutputStream();
+            out.close();
+            
+            BufferedReader inStr = new BufferedReader(new java.io.InputStreamReader(labelg.getInputStream()));
+            String line = inStr.readLine();
+            while (line != null) {
+                line = inStr.readLine();
+            }
+            
+            inStr.close();
+            
+            BufferedReader errStr = new BufferedReader(new java.io.InputStreamReader(labelg.getErrorStream()));
+            line = errStr.readLine();
+            while (line != null) {
+                line = errStr.readLine();
+            }
+            
+            errStr.close();
+            
+            int returnCode = -1;
+            try {
+                returnCode = labelg.waitFor();
+                System.out.println(returnCode);
+            }
+            catch (InterruptedException ie) {
+                System.err.println("Error while generating canonical labels. Error msg: " + ie.getMessage());
+            }
+        }
+        catch (IOException ioe) {
+            System.err.println("Error while generating canonical labels. Error msg: " + ioe.getMessage());
+        }
+        
+        // Read the outputfile to get the canonical label for each graphFormat
+        Map<GraphFormat, String> canonicalLabels = new HashMap<GraphFormat, String>();
+        BufferedReader canonicalLabelReader = null;
+        try {
+            canonicalLabelReader = new BufferedReader(new FileReader(LabelGOutputFile));
+            Iterator<GraphFormat> itr = graphFormats.iterator();
+            String label = canonicalLabelReader.readLine();
+            while (label != null) {
+                canonicalLabels.put(itr.next(), label);
+                label = canonicalLabelReader.readLine();
+            }
+        }
+        catch (IOException ioe) {
+            System.err.println("Error while reading canonical labels produced by labelg. Error msg: " + ioe.getMessage());
+            return null;
+        }
+        finally {
+            if (canonicalLabelReader != null) {
+                try {
+                    canonicalLabelReader.close();
+                }
+                catch (IOException ioe) {
+                    System.err.println("Error while reading canonical labels produced by labelg. Error msg: " + ioe.getMessage());
+                    return null;
+                }
+            }
+        }
+        
+        return canonicalLabels;
     }
     
     private Map<GraphFormat, Integer> subGraphs;
+    private final static String LabelGInputFile = "InputGraphs.g6";
+    private final static String LabelGOutputFile = "OutputGraphs.g6";
 }
