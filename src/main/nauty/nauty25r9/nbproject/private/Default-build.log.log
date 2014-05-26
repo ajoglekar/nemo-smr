@@ -1,0 +1,80 @@
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naututil.o naututil.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nautinv.o nautinv.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o traces.o traces.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o gtools.o gtools.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nauty.o nauty.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nautil.o nautil.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nausparse.o nausparse.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naugraph.o naugraph.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o schreier.o schreier.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naurng.o naurng.c
+C:/cygwin64/bin/gcc.exe -o dreadnaut -g3 -gdwarf-2 dreadnaut.c naututil.o \
+	nautinv.o gtools.o traces.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o  
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o gutil1.o gutil1.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o gutil2.o gutil2.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o gtnauty.o gtnauty.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naugroup.o naugroup.c
+rm -rf nauty.a
+ar crs nauty.a nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o traces.o gtools.o naututil.o \
+	 nautinv.o gutil1.o gutil2.o gtnauty.o naugroup.o \
+	 naurng.o schreier.o
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nauty1.o -DMAXN=WORDSIZE nauty.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nautil1.o -DMAXN=WORDSIZE nautil.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naugraph1.o -DMAXN=WORDSIZE naugraph.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naututil1.o -DMAXN=WORDSIZE naututil.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nautinv1.o -DMAXN=WORDSIZE nautinv.c
+rm -rf nauty1.a
+ar crs nauty1.a nauty1.o nautil1.o nausparse.o naugraph1.o schreier.o naurng.o traces.o gtools.o naututil1.o \
+   nautinv1.o gutil1.o gutil2.o gtnauty.o naugroup.o 
+C:/cygwin64/bin/gcc.exe -o copyg -g3 -gdwarf-2  copyg.c gtools.o 
+C:/cygwin64/bin/gcc.exe -o listg -g3 -gdwarf-2  listg.c gtools.o nautil.o 
+C:/cygwin64/bin/gcc.exe -o labelg -g3 -gdwarf-2 labelg.c gtools.o gtnauty.o \
+    nautinv.o gutil2.o traces.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o  
+C:/cygwin64/bin/gcc.exe -o dretog -g3 -gdwarf-2  dretog.c naututil.o gtools.o \
+    nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o amtog -g3 -gdwarf-2  amtog.c gtools.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o geng -g3 -gdwarf-2  -DMAXN=32 geng.c gtools.o nauty1.o \
+	nautil1.o naugraph1.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o complg -g3 -gdwarf-2  complg.c gtools.o gtnauty.o \
+	nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o NRswitchg -g3 -gdwarf-2  NRswitchg.c gtools.o gtnauty.o \
+	 nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o biplabg -g3 -gdwarf-2  biplabg.c \
+	gtools.o gutil1.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o addedgeg -g3 -gdwarf-2  addedgeg.c gtools.o gtnauty.o \
+        gutil1.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o deledgeg -g3 -gdwarf-2  deledgeg.c gtools.o gtnauty.o \
+	 nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o countg -g3 -gdwarf-2 testg.c gtools.o gtnauty.o gutil1.o \
+         gutil2.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o pickg -g3 -gdwarf-2 testg.c gtools.o gtnauty.o gutil1.o \
+        gutil2.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o genrang -g3 -gdwarf-2  genrang.c \
+	gtools.o naututil.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o newedgeg -g3 -gdwarf-2  newedgeg.c gtools.o gtnauty.o \
+	 nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o catg -g3 -gdwarf-2  catg.c gtools.o 
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o gtoolsW.o -DWORDSIZE=32 gtools.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nautyW1.o -DMAXN=WORDSIZE -DWORDSIZE=32 nauty.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o nautilW1.o -DMAXN=WORDSIZE -DWORDSIZE=32 nautil.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o naugraphW1.o -DMAXN=WORDSIZE -DWORDSIZE=32 naugraph.c
+C:/cygwin64/bin/gcc.exe -c -g3 -gdwarf-2  -o schreierW.o -DWORDSIZE=32 schreier.c
+C:/cygwin64/bin/gcc.exe -o genbg -g3 -gdwarf-2  -DMAXN=WORDSIZE -DWORDSIZE=32 genbg.c gtoolsW.o schreierW.o \
+	nautyW1.o nautilW1.o naugraphW1.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o directg -g3 -gdwarf-2  directg.c gtools.o \
+                nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o naugroup.o 
+C:/cygwin64/bin/gcc.exe -o ranlabg -g3 -gdwarf-2  ranlabg.c gtools.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o multig -g3 -gdwarf-2  multig.c gtools.o \
+                nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o naugroup.o 
+C:/cygwin64/bin/gcc.exe -o planarg -g3 -gdwarf-2  \
+	planarg.c planarity.c gtools.o 
+C:/cygwin64/bin/gcc.exe -o gentourng -g3 -gdwarf-2  -DMAXN=24 gentourng.c gtools.o nauty1.o \
+	nautil1.o naugraph1.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o linegraphg -g3 -gdwarf-2  linegraphg.c gtools.o \
+	nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o watercluster2 -g3 -gdwarf-2  -DMAXN=32 watercluster2.c \
+                 gtools.o nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o subdivideg -g3 -gdwarf-2  subdivideg.c gtools.o \
+	nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o 
+C:/cygwin64/bin/gcc.exe -o shortg -g3 -gdwarf-2  shortg.c gtools.o gtnauty.o nautinv.o \
+            nauty.o nautil.o nausparse.o naugraph.o schreier.o naurng.o gutil2.o traces.o  
