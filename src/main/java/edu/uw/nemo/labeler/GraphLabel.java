@@ -8,13 +8,10 @@ package edu.uw.nemo.labeler;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
 import java.util.*;
 
 /**
@@ -24,48 +21,48 @@ import java.util.*;
 // Creates the canonical labelling for a given graph using nauty library's tool labelg.exe
 public class GraphLabel {
     public GraphLabel() {
-        this.subGraphs = new LinkedHashMap<GraphFormat, Integer>();
+        this.subGraphs = new LinkedHashMap<String, List<GraphFormat>>();
     }
     
     public void addSubGraph(List<int[]> edges, int vertexCount) {
         GraphFormat graphFormat = new GraphFormat(FormatType.Graph6, edges, vertexCount);
         graphFormat.formatGraph();
-        Integer count = this.subGraphs.get(graphFormat);
-        if (count == null) {
-            this.subGraphs.put(graphFormat, 1);
+        List<GraphFormat> graphs = this.subGraphs.get(graphFormat.toString());
+        if (graphs == null) {
+            graphs = new ArrayList<GraphFormat>();
+            this.subGraphs.put(graphFormat.toString(), graphs);
         }
-        else {
-            this.subGraphs.put(graphFormat, count+1);
-        }
+        
+        graphs.add(graphFormat);
     }
     
     // Computes the canonanical labelling for all the sub-graphs that it cureently holds.
-    // The count for each labelling, after aggregation, is the value of the map entry.
+    // The list of original graphs, after aggregation, is the value of the map entry.
     // Thus it aggregate all canonical sub-graphs together.
-    public Map<String, Integer> getCanonicalLabels() {
-        Map<String, Integer> canonicalLabels = new HashMap<String, Integer>();
-        Map<GraphFormat, String> graphWithCanonicalLabels = generateCanonicalLabels(this.subGraphs.keySet());
-        for (Map.Entry<GraphFormat, Integer> subGraph : this.subGraphs.entrySet()) {
+    public Map<String, List<GraphFormat>> getCanonicalLabels() {
+        Map<String, List<GraphFormat>> canonicalLabels = new HashMap<String, List<GraphFormat>>();
+        Map<String, String> graphWithCanonicalLabels = generateCanonicalLabels(this.subGraphs.keySet());
+        for (Map.Entry<String, List<GraphFormat>> subGraph : this.subGraphs.entrySet()) {
             String canonicalLabel = graphWithCanonicalLabels.get(subGraph.getKey());
-            Integer canonicalLabelCount = canonicalLabels.get(canonicalLabel);
-            if (canonicalLabelCount == null) {
-                canonicalLabels.put(canonicalLabel, subGraph.getValue());
+            List<GraphFormat> canonicalGraphs = canonicalLabels.get(canonicalLabel);
+            if (canonicalGraphs == null) {
+                canonicalGraphs = new ArrayList<GraphFormat>();
+                canonicalLabels.put(canonicalLabel, canonicalGraphs);
             }
-            else {
-                canonicalLabels.put(canonicalLabel, canonicalLabelCount + subGraph.getValue());
-            }
+            
+            canonicalGraphs.addAll(subGraph.getValue());
         }
         
         return canonicalLabels;
     }
     
-    private static Map<GraphFormat, String> generateCanonicalLabels(Set<GraphFormat> graphFormats) {
-        // Create a file with all the entries from graphFormats, one at each line.
+    private static Map<String, String> generateCanonicalLabels(Set<String> graphLabels) {
+        // Create a file with all the entries from graphLabels, one at each line.
         BufferedWriter graphWriter = null;
         try {
             graphWriter = new BufferedWriter(new FileWriter(LabelGInputFile));
-            for (GraphFormat graph : graphFormats) {
-                graphWriter.write(graph.toString());
+            for (String graphLabel : graphLabels) {
+                graphWriter.write(graphLabel);
                 graphWriter.write('\n');
             }
         }
@@ -123,11 +120,11 @@ public class GraphLabel {
         }
         
         // Read the outputfile to get the canonical label for each graphFormat
-        Map<GraphFormat, String> canonicalLabels = new HashMap<GraphFormat, String>();
+        Map<String, String> canonicalLabels = new HashMap<String, String>();
         BufferedReader canonicalLabelReader = null;
         try {
             canonicalLabelReader = new BufferedReader(new FileReader(LabelGOutputFile));
-            Iterator<GraphFormat> itr = graphFormats.iterator();
+            Iterator<String> itr = graphLabels.iterator();
             String label = canonicalLabelReader.readLine();
             while (label != null) {
                 canonicalLabels.put(itr.next(), label);
@@ -153,7 +150,7 @@ public class GraphLabel {
         return canonicalLabels;
     }
     
-    private Map<GraphFormat, Integer> subGraphs;
+    private Map<String, List<GraphFormat>> subGraphs;
     private final static String LabelGInputFile = "InputGraphs.g6";
     private final static String LabelGOutputFile = "OutputGraphs.g6";
 }

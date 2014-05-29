@@ -64,11 +64,11 @@ public class GraphLabelTest {
         edges.add( new int[] {4, 5} );
         graphLabel.addSubGraph(edges, vertexCount);
         
-        Map<String, Integer> canonicalLabels = graphLabel.getCanonicalLabels();
+        Map<String, List<GraphFormat>> canonicalLabels = graphLabel.getCanonicalLabels();
         
         assertEquals(canonicalLabels.size(), 1);
         String expectedCanonicalLabel = "DDW";
-        Integer actualCount = canonicalLabels.get(expectedCanonicalLabel);
-        assertEquals(actualCount, (Integer)5);
+        List<GraphFormat> actualGraphs = canonicalLabels.get(expectedCanonicalLabel);
+        assertEquals(actualGraphs.size(), 5);
     }
 }
