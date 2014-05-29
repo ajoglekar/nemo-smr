@@ -1,5 +1,6 @@
 How to run graph labeler with labelg.exe
-1. Build labelg.exe: Go to src\main\nauty\nauty25r9 and run '.\configure' and
+1. Build labelg.exe: If you are on windows machine, would require cygwin with
+gcc. Go to src\main\nauty\nauty25r9 and run '.\configure' and
 then 'make all'. On success, labelg.exe will be present under the same folder.
 2. Make sure network-motif java project is build successfully. To ensure this,
 check the class files are present under target\classes and
