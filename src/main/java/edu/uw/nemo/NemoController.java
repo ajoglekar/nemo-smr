@@ -3,6 +3,7 @@ package edu.uw.nemo;
 import edu.uw.nemo.esu.DirectCalculator;
 import edu.uw.nemo.esu.ESUGen;
 import edu.uw.nemo.io.Parser;
+import edu.uw.nemo.labeler.GraphFormat;
 import edu.uw.nemo.model.Mapping;
 import edu.uw.nemo.nauty.NautyLabeler;
 
@@ -37,6 +38,7 @@ public class NemoController {
         List<int[]> subgraphs = generator.enumerateSubgraphs(mapping, size);
         System.out.println(subgraphs.size());
         // get canonical labels with GraphLabel
+        Map<String, List<GraphFormat>> canonicalSubgraphs = labeler.mapCanonical(mapping, subgraphs);
         // for each label, get standard concentration with DirectCalc
 
         return new HashMap<String, Set<int[]>>();

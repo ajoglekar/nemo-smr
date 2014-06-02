@@ -14,10 +14,11 @@ import static org.junit.Assert.*;
 
 public class NemoControllerTest {
 
-    //@Test
+    @Test
     public void assertValidMotifCount() throws IOException {
         NemoController target = new NemoController(new Parser(), new ESUGen(), new NautyLabeler(), new DirectCalculator());
-        Map<String, Set<int[]>> actual = target.extract("/Users/joglekaa/pers/learning/uw/mscsse/6 network motif/resources/temp.out", 3);
+//        Map<String, Set<int[]>> actual = target.extract("/Users/joglekaa/pers/learning/uw/mscsse/6 network motif/resources/temp.out", 3);
+        Map<String, Set<int[]>> actual = target.extract("C:\\Users\\anand\\dev\\network-motif\\src\\main\\resources\\temp.out", 3);
         assertEquals(23, actual.size());
     }
 
