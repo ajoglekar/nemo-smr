@@ -2,7 +2,12 @@ package edu.uw.nemo.proto.converter;
 
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.FileSystems;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -11,17 +16,13 @@ import static junit.framework.Assert.assertEquals;
  */
 public class DIPConverterTest {
 
-    @Test public void assertConverterHandlesMultipleLinksCorrectly() throws IOException {
+    @Test
+    public void assertConverterHandlesMultipleLinksCorrectly() throws IOException, URISyntaxException {
         DIPConverter target = new DIPConverter();
 
-        int count = target.convert("/Users/joglekaa/pers/learning/uw/mscsse/6 network motif/resources/Scere20140117.txt"
-                , "/Users/joglekaa/pers/learning/uw/mscsse/6 network motif/resources/temp.out");
+        int count = target.convert("Scere20140427.txt", "temp.out");
 
-        assertEquals(22637, count);
-
-        /*
-        (- 22638 22465) == 173
-         */
+        assertEquals(22735, count);
     }
 
 }

@@ -1,17 +1,20 @@
 package edu.uw.nemo.proto.converter;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Created by joglekaa on 4/15/14.
  */
 public class DIPConverter {
 
-    public int convert(String srcFile, String destFile) throws IOException {
+    public int convert(String srcFile, String destFile) throws IOException, URISyntaxException {
         int count = 0;
         BufferedReader input = openInputFile(srcFile);
 
@@ -46,14 +49,18 @@ public class DIPConverter {
         System.out.println("finished");
     }
 
-    private BufferedReader openInputFile(String srcFile) throws IOException {
-        Path path = FileSystems.getDefault().getPath(srcFile);
+    private BufferedReader openInputFile(String srcFile) throws IOException, URISyntaxException {
+        URL url =
+                Thread.currentThread().getContextClassLoader().getResource(srcFile);
+        Path path = Paths.get(url.toURI());
         Charset charset = Charset.forName("US-ASCII");
         return Files.newBufferedReader(path, charset);
     }
 
-    private BufferedWriter openOutputFile(String destFile) throws IOException {
-        Path path = FileSystems.getDefault().getPath(destFile);
+    private BufferedWriter openOutputFile(String destFile) throws IOException, URISyntaxException {
+        URL url =
+                Thread.currentThread().getContextClassLoader().getResource(destFile);
+        Path path = Paths.get(url.toURI());
         Charset charset = Charset.forName("US-ASCII");
         return Files.newBufferedWriter(path, charset);
     }
