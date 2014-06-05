@@ -4,21 +4,24 @@ import edu.uw.nemo.model.Mapping;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Parser {
 
-    public Mapping parser(String fileName) throws IOException {
+    public Mapping parser(String fileName) throws IOException, URISyntaxException {
         return map(readFile(fileName));
     }
 
     // read file
     // split record
-    List<String[]> readFile(String srcFile) throws IOException {
+    List<String[]> readFile(String srcFile) throws IOException, URISyntaxException {
         long start = System.currentTimeMillis();
         List<String[]> result = new ArrayList<String[]>();
         BufferedReader input = openInputFile(srcFile);
@@ -82,8 +85,10 @@ public class Parser {
         return id;
     }
 
-    private BufferedReader openInputFile(String srcFile) throws IOException {
-        Path path = FileSystems.getDefault().getPath(srcFile);
+    private BufferedReader openInputFile(String srcFile) throws IOException, URISyntaxException {
+        URL url =
+                Thread.currentThread().getContextClassLoader().getResource(srcFile);
+        Path path = Paths.get(url.toURI());
         Charset charset = Charset.forName("US-ASCII");
         return Files.newBufferedReader(path, charset);
     }

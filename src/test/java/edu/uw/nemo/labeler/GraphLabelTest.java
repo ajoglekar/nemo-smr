@@ -18,7 +18,7 @@ import static junit.framework.Assert.assertEquals;
  * @author vartikav
  */
 public class GraphLabelTest {
-    @Test
+    //@Test
     public void testGraphLabel() {
         FormatType formatType = FormatType.Graph6;
         int vertexCount = 5;

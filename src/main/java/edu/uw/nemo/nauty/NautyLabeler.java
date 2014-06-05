@@ -15,7 +15,7 @@ public class NautyLabeler {
         GraphLabel label = new GraphLabel();
         if (subgraphs != null) {
             for (int[] subGraph : subgraphs) {
-                if (subGraph != null) {
+                if (subGraph != null && subGraph.length > 0) {
                     label.addSubGraph(getEdges(mapping, subGraph), subGraph.length);
                 }
             }

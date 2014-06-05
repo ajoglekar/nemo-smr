@@ -36,7 +36,7 @@ public class GraphLabel {
         graphs.add(graphFormat);
     }
     
-    // Computes the canonanical labelling for all the sub-graphs that it cureently holds.
+    // Computes the canonanical labelling for all the sub-graphs that it currently holds.
     // The list of original graphs, after aggregation, is the value of the map entry.
     // Thus it aggregate all canonical sub-graphs together.
     public Map<String, List<GraphFormat>> getCanonicalLabels() {

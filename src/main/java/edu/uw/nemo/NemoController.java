@@ -8,6 +8,7 @@ import edu.uw.nemo.model.Mapping;
 import edu.uw.nemo.nauty.NautyLabeler;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,14 +32,15 @@ public class NemoController {
         this.calculator = calculator;
     }
 
-    Map<String, Set<int[]>> extract(String fileName, int size) throws IOException {
+    Map<String, Set<int[]>> extract(String fileName, int size) throws IOException, URISyntaxException {
         // build Mapping with parser
         Mapping mapping = parser.parser(fileName);
         // generate motifs with ESUGen
         List<int[]> subgraphs = generator.enumerateSubgraphs(mapping, size);
         System.out.println(subgraphs.size());
         // get canonical labels with GraphLabel
-        Map<String, List<GraphFormat>> canonicalSubgraphs = labeler.mapCanonical(mapping, subgraphs);
+        //todo: fix mapping integration
+//        Map<String, List<GraphFormat>> canonicalSubgraphs = labeler.mapCanonical(mapping, subgraphs);
         // for each label, get standard concentration with DirectCalc
 
         return new HashMap<String, Set<int[]>>();
