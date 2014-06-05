@@ -1,9 +1,6 @@
 package edu.uw.nemo.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Mapping {
 
@@ -33,6 +30,27 @@ public class Mapping {
 
     public List<Integer> getNeighbours(Integer node) {
         return new ArrayList<Integer>(this.adjMapping.get(node));
+    }
+
+    public List<int[]> getEdges(int[] subGraph) {
+        ArrayList<int[]> links = new ArrayList<int[]>();
+        for (int from = 0; from < subGraph.length; from++) {
+            Set<Integer> neighbours = new HashSet<Integer>(getNeighbours(from));
+            for (int to = from + 1; to < subGraph.length; to++) {
+                if (neighbours.contains(to)) {
+                    links.add(makeLink(from, to));
+                }
+            }
+        }
+
+        return links;
+    }
+
+    private int[] makeLink(int from, int to) {
+        int[] link = new int[2];
+        link[0] = from;
+        link[1] = to;
+        return link;
     }
 
 }

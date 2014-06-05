@@ -42,6 +42,8 @@ public class NemoController {
         //todo: fix mapping integration
 //        Map<String, List<GraphFormat>> canonicalSubgraphs = labeler.mapCanonical(mapping, subgraphs);
         // for each label, get standard concentration with DirectCalc
+        //todo: fix standard conc integration
+//        Map<String, List<Integer>> conc = calculator.standardConcentrations(canonicalSubgraphs);
 
         return new HashMap<String, Set<int[]>>();
     }
