@@ -16,28 +16,39 @@ public class DIPConverter {
 
     public int convert(String srcFile, String destFile) throws IOException, URISyntaxException {
         int count = 0;
-        BufferedReader input = openInputFile(srcFile);
+        BufferedReader input = null;
+        BufferedWriter output = null;
+        try {
+            input = openInputFile(srcFile);
 
-        BufferedWriter ouput = openOutputFile(destFile);
-        String header = input.readLine();
-        if (header != null && !header.isEmpty()) {
+            output = openOutputFile(destFile);
+            String header = input.readLine();
+            if (header != null && !header.isEmpty()) {
 //            prnt("header", header.split("\t"));
-            String line = null;
-            while ((line = input.readLine()) != null) {
-                // extract node id 1, node id 2
-                String[] split = line.trim().split("\t");
+                String line = null;
+                while ((line = input.readLine()) != null) {
+                    // extract node id 1, node id 2
+                    String[] split = line.trim().split("\t");
 //                prnt("record", split);
-                // validate
-                ouput.write(split[0]);
-                ouput.write("\t");
-                ouput.write(split[1]);
-                ouput.newLine();
-                count++;
+                    // validate
+                    output.write(split[0]);
+                    output.write("\t");
+                    output.write(split[1]);
+                    output.newLine();
+                    count++;
+                }
+            }
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            if (output != null) {
+                output.flush();
+                output.close();
+            }
+            if (input != null) {
+                input.close();
             }
         }
-        ouput.flush();
-        ouput.close();
-        input.close();
         return count;
     }
 
@@ -58,9 +69,7 @@ public class DIPConverter {
     }
 
     private BufferedWriter openOutputFile(String destFile) throws IOException, URISyntaxException {
-        URL url =
-                Thread.currentThread().getContextClassLoader().getResource(destFile);
-        Path path = Paths.get(url.toURI());
+        Path path = Paths.get(destFile);
         Charset charset = Charset.forName("US-ASCII");
         return Files.newBufferedWriter(path, charset);
     }

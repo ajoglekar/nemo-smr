@@ -20,4 +20,23 @@ public class ParserTest {
         assertEquals(22735, actual.getLinkCount());
     }
 
+    @Test
+    public void assertStats() throws IOException, URISyntaxException {
+        Parser target = new Parser();
+        printStats(target, "Rnorv20150429.csv");
+        printStats(target, "Celeg20150429.csv");
+        printStats(target, "Scere20150429.csv");
+        printStats(target, "Dmela20150429.csv");
+        printStats(target, "Ecoli20150429.out");
+        printStats(target, "Hpylo20150429.out");
+        printStats(target, "Hsapi20150429.out");
+        printStats(target, "Mmusc20150429.out");
+        printStats(target, "Scere20140427.out");
+    }
+
+    private void printStats(Parser parser, String inputFileName) throws IOException, URISyntaxException {
+        Mapping mapping = parser.parser(inputFileName);
+        System.out.println("File " + inputFileName + " contains [" + mapping.getNodeCount() + "] nodes and [" + mapping.getLinkCount() + "] links.");
+    }
+
 }

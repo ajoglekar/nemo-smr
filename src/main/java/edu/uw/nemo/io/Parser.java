@@ -24,19 +24,28 @@ public class Parser {
     List<String[]> readFile(String srcFile) throws IOException, URISyntaxException {
         long start = System.currentTimeMillis();
         List<String[]> result = new ArrayList<String[]>();
-        BufferedReader input = openInputFile(srcFile);
-        String line = null;
-        while ((line = input.readLine()) != null) {
-            String[] split = line.trim().split("\t");
-            String node1 = split[0];
-            String node2 = split[1];
-            if (node1 != null && node2 != null) {
-                split[0] = node1.trim();
-                split[1] = node2.trim();
-                result.add(split);
+        BufferedReader input = null;
+        try {
+            input = openInputFile(srcFile);
+            String line = null;
+            while ((line = input.readLine()) != null) {
+                String[] split = line.trim().split("\t");
+                String node1 = split[0];
+                String node2 = split[1];
+                if (node1 != null && node2 != null) {
+                    split[0] = node1.trim();
+                    split[1] = node2.trim();
+                    result.add(split);
+                }
+            }
+            System.out.println("loading for file too " + (System.currentTimeMillis() - start) + " milliseconds.");
+        } catch (IOException ioe) {
+            // foo bar!
+        } finally {
+            if (input != null) {
+                input.close();
             }
         }
-        System.out.println("loading for file too " + (System.currentTimeMillis() - start) + " milliseconds.");
         return result;
     }
 
