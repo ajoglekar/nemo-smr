@@ -9,3 +9,4 @@ src/main/nauty/nauty25r9/*.exe
 src/main/nauty/nauty25r9/*.g6
 src/main/nauty/nauty25r9/*.txt
 .idea/**
+*.iml
