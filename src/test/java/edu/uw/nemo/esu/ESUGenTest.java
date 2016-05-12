@@ -37,6 +37,11 @@ public class ESUGenTest {
         ESUGen target = new ESUGen();
         List<int[]> actual = target.enumerateSubgraphs(mapping, 3);
         assertEquals(763322, actual.size());
+
+        ESUCounter counter = new ESUCounter();
+        List<int[]> counts = counter.enumerateSubgraphs(mapping, 3);
+        assertEquals(763322, counts.size());
+
     }
 
 }

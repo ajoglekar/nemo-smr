@@ -91,7 +91,9 @@ public class SparkGenerator implements Serializable {
                 ArrayList<Integer> integers = new ArrayList<Integer>();
                 while (integerIterator.hasNext()) {
                     Integer vertex = integerIterator.next();
-                    integers.add(counter.enumerateSubgraphs(vertex, mapping.getValue(), k).size());
+                    Extractor extractor = new Extractor();
+                    counter.enumerateSubgraphs(vertex, mapping.getValue(), k, extractor);
+                    integers.add(extractor.getSubgraphs().size());
                 }
                 return integers;
             }
