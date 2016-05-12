@@ -36,7 +36,7 @@ public class ESUCounter implements Serializable {
         List<Integer> extension = filterGreater(mapping.getNeighbours(vertex), vertex);
         extendSubgraph(mapping, subGraph, extension, length, result);
 
-        System.out.println("enumerate subgraph took " + (System.currentTimeMillis() - start) + " milliseconds.");
+//        System.out.println("enumerate subgraph took " + (System.currentTimeMillis() - start) + " milliseconds and found .");
 
         return result;
     }

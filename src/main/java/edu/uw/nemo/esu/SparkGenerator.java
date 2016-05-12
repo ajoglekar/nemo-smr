@@ -89,7 +89,10 @@ public class SparkGenerator implements Serializable {
 
             public Iterable<Integer> call(Iterator<Integer> integerIterator) throws Exception {
                 ArrayList<Integer> integers = new ArrayList<Integer>();
-                integers.add(counter.enumerateSubgraphs(mapping.getValue(), k).size());
+                while (integerIterator.hasNext()) {
+                    Integer vertex = integerIterator.next();
+                    integers.add(counter.enumerateSubgraphs(vertex, mapping.getValue(), k).size());
+                }
                 return integers;
             }
 
@@ -104,6 +107,7 @@ public class SparkGenerator implements Serializable {
             }
         });
         System.out.println("done!");
+        sc.close();
         return result;
     }
 
