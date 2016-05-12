@@ -38,7 +38,7 @@ public class ESUGenTest {
         List<int[]> actual = target.enumerateSubgraphs(mapping, 3);
         assertEquals(763322, actual.size());
 
-        ESUCounter counter = new ESUCounter();
+        ESUAlgorithm counter = new ESUAlgorithm();
         List<int[]> counts = counter.enumerateSubgraphs(mapping, 3);
         assertEquals(763322, counts.size());
 

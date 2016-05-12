@@ -82,18 +82,18 @@ public class SparkGenerator implements Serializable {
         System.out.println("time to parallelize = " + (parallelize - broadcast) +" milliseconds.");
 
         // map call on vertices...
-        final ESUCounter counter = new ESUCounter();
+        final ESUAlgorithm counter = new ESUAlgorithm();
 
         System.out.println("map partitions.");
-        JavaRDD<Integer> counts = vertices.mapPartitions(new FlatMapFunction<Iterator<Integer>, Integer>() {
+        JavaRDD<Long> counts = vertices.mapPartitions(new FlatMapFunction<Iterator<Integer>, Long>() {
 
-            public Iterable<Integer> call(Iterator<Integer> integerIterator) throws Exception {
-                ArrayList<Integer> integers = new ArrayList<Integer>();
+            public Iterable<Long> call(Iterator<Integer> integerIterator) throws Exception {
+                ArrayList<Long> integers = new ArrayList<Long>();
                 while (integerIterator.hasNext()) {
                     Integer vertex = integerIterator.next();
-                    Extractor extractor = new Extractor();
-                    counter.enumerateSubgraphs(vertex, mapping.getValue(), k, extractor);
-                    integers.add(extractor.getSubgraphs().size());
+                    Counter c = new Counter();
+                    counter.enumerateSubgraphs(vertex, mapping.getValue(), k, c);
+                    integers.add(c.getCount());
                 }
                 return integers;
             }
@@ -103,8 +103,8 @@ public class SparkGenerator implements Serializable {
         System.out.println("time to extract = " + (extract - parallelize) +" milliseconds.");
 
         System.out.println("summing up.");
-        long result = counts.reduce(new Function2<Integer, Integer, Integer>() {
-            public Integer call(Integer i, Integer j) throws Exception {
+        long result = counts.reduce(new Function2<Long, Long, Long>() {
+            public Long call(Long i, Long j) throws Exception {
                 return i + j;
             }
         });

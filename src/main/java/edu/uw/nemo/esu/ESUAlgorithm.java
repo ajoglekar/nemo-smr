@@ -8,10 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Counts extracted subgraphs
- */
-public class ESUCounter implements Serializable {
+public class ESUAlgorithm implements Serializable {
 
     public List<int[]> enumerateSubgraphs(Mapping mapping, int length) {
         long start = System.currentTimeMillis();

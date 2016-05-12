@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by anand on 5/12/16.
+ * subgraph extraction strategy for ESU algorithm.
  */
 public class Extractor implements Collector {
 
