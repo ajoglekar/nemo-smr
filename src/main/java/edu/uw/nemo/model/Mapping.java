@@ -1,8 +1,9 @@
 package edu.uw.nemo.model;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Mapping {
+public class Mapping implements Serializable {
 
     private final List<String[]> adjList;
     private final Map<String, Integer> nodeToId;

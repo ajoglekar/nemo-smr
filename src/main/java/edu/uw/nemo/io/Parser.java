@@ -15,7 +15,7 @@ import java.util.*;
 
 public class Parser {
 
-    public Mapping parser(String fileName) throws IOException, URISyntaxException {
+    public Mapping parse(String fileName) throws IOException, URISyntaxException {
         return map(readFile(fileName));
     }
 

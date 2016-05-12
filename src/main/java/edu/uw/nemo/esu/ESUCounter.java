@@ -2,19 +2,20 @@ package edu.uw.nemo.esu;
 
 import edu.uw.nemo.model.Mapping;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
- * generate motifs of given length with ESU algorithm
+ * Counts extracted subgraphs
  */
-public class ESUGen {
+public class ESUCounter implements Serializable {
 
     public List<int[]> enumerateSubgraphs(Mapping mapping, int length) {
         long start = System.currentTimeMillis();
-        ArrayList<int[]> result = new ArrayList<int[]>();
+        List<int[]> result = new ArrayList<int[]>();
         List<Integer> nodes = mapping.getIds();
         for (Integer node : nodes) {
             List<Integer> subGraph = new ArrayList<Integer>();
@@ -22,6 +23,19 @@ public class ESUGen {
             List<Integer> extension = filterGreater(mapping.getNeighbours(node), node);
             extendSubgraph(mapping, subGraph, extension, length, result);
         }
+        System.out.println("enumerate subgraph took " + (System.currentTimeMillis() - start) + " milliseconds.");
+
+        return result;
+    }
+
+    public List<int[]> enumerateSubgraphs(Integer vertex, Mapping mapping, int length) {
+        long start = System.currentTimeMillis();
+        List<int[]> result = new ArrayList<int[]>();
+        List<Integer> subGraph = new ArrayList<Integer>();
+        subGraph.add(vertex);
+        List<Integer> extension = filterGreater(mapping.getNeighbours(vertex), vertex);
+        extendSubgraph(mapping, subGraph, extension, length, result);
+
         System.out.println("enumerate subgraph took " + (System.currentTimeMillis() - start) + " milliseconds.");
 
         return result;

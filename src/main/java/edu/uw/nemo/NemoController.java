@@ -3,7 +3,6 @@ package edu.uw.nemo;
 import edu.uw.nemo.esu.DirectCalculator;
 import edu.uw.nemo.esu.ESUGen;
 import edu.uw.nemo.io.Parser;
-import edu.uw.nemo.labeler.GraphFormat;
 import edu.uw.nemo.model.Mapping;
 import edu.uw.nemo.nauty.NautyLabeler;
 
@@ -33,8 +32,8 @@ public class NemoController {
     }
 
     Map<String, Set<int[]>> extract(String fileName, int size) throws IOException, URISyntaxException {
-        // build Mapping with parser
-        Mapping mapping = parser.parser(fileName);
+        // build Mapping with parse
+        Mapping mapping = parser.parse(fileName);
         // generate motifs with ESUGen
         List<int[]> subgraphs = generator.enumerateSubgraphs(mapping, size);
         System.out.println(subgraphs.size());

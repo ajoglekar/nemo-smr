@@ -6,9 +6,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by joglekaa on 4/16/14.
- */
 public class ESUGenTest {
 
     private final GenUtil genUtil = new GenUtil();

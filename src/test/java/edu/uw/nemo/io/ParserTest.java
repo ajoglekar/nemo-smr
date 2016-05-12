@@ -14,7 +14,7 @@ public class ParserTest {
     @Test
     public void assertValidParse() throws IOException, URISyntaxException {
         Parser target = new Parser();
-        Mapping actual = target.parser("full_scere_20140427.csv");
+        Mapping actual = target.parse("full_scere_20140427.csv");
         assertNotNull(actual);
         assertEquals(5132, actual.getNodeCount());
         assertEquals(22735, actual.getLinkCount());
@@ -35,7 +35,7 @@ public class ParserTest {
     }
 
     private void printStats(Parser parser, String inputFileName) throws IOException, URISyntaxException {
-        Mapping mapping = parser.parser(inputFileName);
+        Mapping mapping = parser.parse(inputFileName);
         System.out.println("File " + inputFileName + " contains [" + mapping.getNodeCount() + "] nodes and [" + mapping.getLinkCount() + "] links.");
     }
 

@@ -1,8 +1,11 @@
 package edu.uw.nemo.esu;
 
+import edu.uw.nemo.io.Parser;
 import edu.uw.nemo.model.Mapping;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -11,8 +14,7 @@ public class ESUGenTest {
 
     private final GenUtil genUtil = new GenUtil();
 
-    @Test
-    public void assertDefaultGen() {
+    @Test public void assertDefaultGen() {
         Mapping input = genUtil.buildMapping(genUtil.setupAL());
 
         ESUGen target = new ESUGen();
@@ -27,6 +29,18 @@ public class ESUGenTest {
         List<int[]> actual3 = target.enumerateSubgraphs(input, 4);
         assertEquals(24, actual3.size());
         genUtil.printCombinations(actual3);
+    }
+
+    @Test public void validateFullCount() throws IOException, URISyntaxException {
+        Parser parser = new Parser();
+        Mapping mapping = parser.parse("full_scere_20140427.csv");
+        ESUGen target = new ESUGen();
+        List<int[]> actual = target.enumerateSubgraphs(mapping, 3);
+        long count = 0;
+        for(int i = 0; i < actual.size(); i++) {
+            count += actual.get(i).length;
+        }
+        assertEquals(2289966, count);
     }
 
 }
