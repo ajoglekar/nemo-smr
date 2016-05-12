@@ -36,11 +36,7 @@ public class ESUGenTest {
         Mapping mapping = parser.parse("full_scere_20140427.csv");
         ESUGen target = new ESUGen();
         List<int[]> actual = target.enumerateSubgraphs(mapping, 3);
-        long count = 0;
-        for(int i = 0; i < actual.size(); i++) {
-            count += actual.get(i).length;
-        }
-        assertEquals(2289966, count);
+        assertEquals(763322, actual.size());
     }
 
 }
