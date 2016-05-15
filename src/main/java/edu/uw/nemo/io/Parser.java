@@ -3,15 +3,15 @@ package edu.uw.nemo.io;
 import edu.uw.nemo.model.Mapping;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Parser {
 
@@ -27,7 +27,7 @@ public class Parser {
         BufferedReader input = null;
         try {
             input = openInputFile(srcFile);
-            String line = null;
+            String line;
             while ((line = input.readLine()) != null) {
                 String[] split = line.trim().split("\t");
                 String node1 = split[0];
@@ -38,7 +38,7 @@ public class Parser {
                     result.add(split);
                 }
             }
-            System.out.println("loading for file too " + (System.currentTimeMillis() - start) + " milliseconds.");
+            System.out.println("loading for file took " + (System.currentTimeMillis() - start) + " milliseconds.");
         } catch (IOException ioe) {
             // foo bar!
         } finally {
@@ -94,12 +94,8 @@ public class Parser {
         return id;
     }
 
-    private BufferedReader openInputFile(String srcFile) throws IOException, URISyntaxException {
-        URL url =
-                Thread.currentThread().getContextClassLoader().getResource(srcFile);
-        Path path = Paths.get(url.toURI());
-        Charset charset = Charset.forName("US-ASCII");
-        return Files.newBufferedReader(path, charset);
+    private BufferedReader openInputFile(String srcFile) throws IOException {
+        return new BufferedReader(new FileReader(srcFile));
     }
 
 }

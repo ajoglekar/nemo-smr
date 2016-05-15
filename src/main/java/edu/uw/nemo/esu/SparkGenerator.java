@@ -12,6 +12,7 @@ import org.apache.spark.broadcast.Broadcast;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 import java.util.*;
 
 /**
@@ -61,6 +62,7 @@ public class SparkGenerator implements Serializable {
     }
 
     public long generate() throws IOException, URISyntaxException {
+        System.out.println("current folder is [" + Paths.get(".").toAbsolutePath().normalize().toString() + "].");
         long start = System.currentTimeMillis();
 
         // instantiate spark context
@@ -72,6 +74,7 @@ public class SparkGenerator implements Serializable {
         // parse input file and broadcast variable for mapping
         Parser parser = new Parser();
         final Broadcast<Mapping> mapping = sc.broadcast(parser.parse(fileName));
+        System.out.println("input file had [" + mapping.getValue().getLinkCount() + "] records.");
         long broadcast = System.currentTimeMillis();
         System.out.println("time to parse and broadcast mapping = " + (broadcast - scStart) +" milliseconds.");
 
