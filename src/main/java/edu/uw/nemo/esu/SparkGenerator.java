@@ -72,8 +72,11 @@ public class SparkGenerator implements Serializable {
         System.out.println("time to start spark context = " + (scStart - start) +" milliseconds.");
 
         // parse input file and broadcast variable for mapping
+        JavaRDD<String> textFile = sc.textFile(fileName);
+        List<String> strings = textFile.toArray();
         Parser parser = new Parser();
-        final Broadcast<Mapping> mapping = sc.broadcast(parser.parse(fileName));
+        final Broadcast<Mapping> mapping = sc.broadcast(parser.parseList(strings));
+        System.out.println("*********************** using spring context to load [" + fileName + "].");
         System.out.println("input file had [" + mapping.getValue().getLinkCount() + "] records.");
         long broadcast = System.currentTimeMillis();
         System.out.println("time to parse and broadcast mapping = " + (broadcast - scStart) +" milliseconds.");

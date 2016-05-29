@@ -29,15 +29,7 @@ public class Parser {
             input = openInputFile(srcFile);
             String line;
             while ((line = input.readLine()) != null) {
-                String[] split = line.trim().split("\t");
-                String node1 = split[0];
-                String node2 = split[1];
-                if (node1 != null && node2 != null) {
-                    split[0] = node1.trim();
-                    split[1] = node2.trim();
-                    result.add(split);
-                }
-            }
+                collectMappings(result, line);            }
             System.out.println("loading for file took " + (System.currentTimeMillis() - start) + " milliseconds.");
         } catch (IOException ioe) {
             // foo bar!
@@ -47,6 +39,25 @@ public class Parser {
             }
         }
         return result;
+    }
+
+    public Mapping parseList(List<String> lines) {
+        List<String[]> result = new ArrayList<String[]>();
+        for (String line : lines) {
+            collectMappings(result, line);
+        }
+        return map(result);
+    }
+
+    private void collectMappings(List<String[]> result, String line) {
+        String[] split = line.trim().split("\t");
+        String node1 = split[0];
+        String node2 = split[1];
+        if (node1 != null && node2 != null) {
+            split[0] = node1.trim();
+            split[1] = node2.trim();
+            result.add(split);
+        }
     }
 
     // map string -> string
