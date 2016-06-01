@@ -3,11 +3,13 @@ package edu.uw.nemo.esu;
 import edu.uw.nemo.io.Parser;
 import edu.uw.nemo.model.Mapping;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFlatMapFunction;
 import org.apache.spark.broadcast.Broadcast;
+import scala.Tuple2;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -35,6 +37,8 @@ public class SparkGenerator implements Serializable {
         String appName = null;
         String master = null;
         int n = 0;
+        String estimate = null;
+
         if (length > 0) {
             fileName = args[0];
         }
@@ -50,8 +54,15 @@ public class SparkGenerator implements Serializable {
         if (length > 4) {
             n = Integer.parseInt(args[4]);
         }
+        if (length > 5) {
+            estimate = args[5];
+        }
         SparkGenerator generator = new SparkGenerator(fileName, k, appName, master, n);
-        generator.generate();
+        if ("test".equals(estimate)) {
+            generator.generate(new NullESUAlgorithm());
+        } else {
+            generator.generate(new ESUAlgorithm());
+        }
     }
 
     SparkGenerator(String fileName, int k, String appName, String master, int n) {
@@ -62,7 +73,7 @@ public class SparkGenerator implements Serializable {
         this.n = n;
     }
 
-    public long generate() throws IOException, URISyntaxException {
+    public long generate(ESUAlgorithm esu) throws IOException, URISyntaxException {
         long start = System.currentTimeMillis();
         logAndPrint("starting to process [" + fileName + "].");
 
@@ -78,45 +89,50 @@ public class SparkGenerator implements Serializable {
         Parser parser = new Parser();
         final Broadcast<Mapping> mapping = sc.broadcast(parser.parseList(strings));
         long broadcast = System.currentTimeMillis();
-        logAndPrint("Input file [" + fileName + "] had [" + mapping.getValue().getLinkCount() + "] records.");
+        logAndPrint("Input file [" + fileName + "] had [" + mapping.getValue().getNodeCount() + "] vertices and [" + mapping.getValue().getLinkCount() + "] edges.");
         logAndPrint("Time to parse and broadcast mapping = " + (broadcast - scStart) +" milliseconds.");
 
         // partition vertices
         int numPartitions = 3 * k * n;
-        System.out.println(numPartitions);
+        logAndPrint("Parallelizing with [" + numPartitions + "] partitions.");
         List<Integer> pVertices = new HashPartitioner().prepPartitions(mapping.getValue().getIds(), numPartitions);
         JavaRDD<Integer> vertices = sc.parallelize(pVertices, numPartitions);
         long parallelize = System.currentTimeMillis();
         logAndPrint("time to parallelize = " + (parallelize - broadcast) +" milliseconds.");
 
-        // map call on vertices...
-        final ESUAlgorithm counter = new ESUAlgorithm();
+        long result = getCount(esu, mapping, vertices);
 
+        sc.close();
+        return result;
+    }
+
+    // map call on vertices...
+    private long getCount(final ESUAlgorithm esu, final Broadcast<Mapping> mapping, JavaRDD<Integer> vertices) {
         logAndPrint("Starting parallel run: map partitions.");
-        JavaRDD<Long> counts = vertices.mapPartitions(new FlatMapFunction<Iterator<Integer>, Long>() {
+        long startExtract = System.currentTimeMillis();
+        JavaPairRDD<Integer, Long> counts = vertices.mapPartitionsToPair(new PairFlatMapFunction<Iterator<Integer>, Integer, Long>() {
 
-            public Iterable<Long> call(Iterator<Integer> integerIterator) throws Exception {
-                ArrayList<Long> integers = new ArrayList<Long>();
+            public Iterable<Tuple2<Integer, Long>> call(Iterator<Integer> integerIterator) throws Exception {
+                ArrayList<Tuple2<Integer, Long>> countsPerVertex = new ArrayList<Tuple2<Integer, Long>>();
                 while (integerIterator.hasNext()) {
                     Integer vertex = integerIterator.next();
                     Counter c = new Counter();
-                    counter.enumerateSubgraphs(vertex, mapping.getValue(), k, c);
-                    integers.add(c.getCount());
+                    esu.enumerateSubgraphs(vertex, mapping.getValue(), k, c);
+                    countsPerVertex.add(new Tuple2<Integer, Long>(vertex, c.getCount()));
                 }
-                return integers;
+                return countsPerVertex;
             }
 
         });
-        long extract = System.currentTimeMillis();
-        logAndPrint("Time to extract = " + (extract - parallelize) +" milliseconds.");
+        long endExtract = System.currentTimeMillis();
+        logAndPrint("Time to extract = " + (endExtract - startExtract) +" milliseconds.");
 
-        long result = counts.reduce(new Function2<Long, Long, Long>() {
+        long result = counts.values().reduce(new Function2<Long, Long, Long>() {
             public Long call(Long i, Long j) throws Exception {
                 return i + j;
             }
         });
         logAndPrint("Done, found [" + result + "] distinct subgraphs.");
-        sc.close();
         return result;
     }
 
