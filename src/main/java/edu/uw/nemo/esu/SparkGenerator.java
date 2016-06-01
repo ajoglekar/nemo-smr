@@ -12,7 +12,7 @@ import org.apache.spark.broadcast.Broadcast;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URISyntaxException;
-import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -20,6 +20,7 @@ import java.util.*;
  */
 public class SparkGenerator implements Serializable {
 
+    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     private final String fileName;
     private final int k;
     private final String appName;
@@ -62,35 +63,36 @@ public class SparkGenerator implements Serializable {
     }
 
     public long generate() throws IOException, URISyntaxException {
-        System.out.println("current folder is [" + Paths.get(".").toAbsolutePath().normalize().toString() + "].");
         long start = System.currentTimeMillis();
+        logAndPrint("starting to process [" + fileName + "].");
 
         // instantiate spark context
         SparkConf conf = new SparkConf().setAppName(appName).setMaster(master);
         JavaSparkContext sc = new JavaSparkContext(conf);
         long scStart = System.currentTimeMillis();
-        System.out.println("time to start spark context = " + (scStart - start) +" milliseconds.");
+        logAndPrint("time to start spark context = " + (scStart - start) +" milliseconds.");
 
         // parse input file and broadcast variable for mapping
         JavaRDD<String> textFile = sc.textFile(fileName);
         List<String> strings = textFile.toArray();
         Parser parser = new Parser();
         final Broadcast<Mapping> mapping = sc.broadcast(parser.parseList(strings));
-        System.out.println("*********************** using spring context to load [" + fileName + "].");
-        System.out.println("input file had [" + mapping.getValue().getLinkCount() + "] records.");
         long broadcast = System.currentTimeMillis();
-        System.out.println("time to parse and broadcast mapping = " + (broadcast - scStart) +" milliseconds.");
+        logAndPrint("Input file [" + fileName + "] had [" + mapping.getValue().getLinkCount() + "] records.");
+        logAndPrint("Time to parse and broadcast mapping = " + (broadcast - scStart) +" milliseconds.");
 
         // partition vertices
-        System.out.println(3 * k * n);
-        JavaRDD<Integer> vertices = sc.parallelize(mapping.getValue().getIds(), 3 * k * n);
+        int numPartitions = 3 * k * n;
+        System.out.println(numPartitions);
+        List<Integer> pVertices = new HashPartitioner().prepPartitions(mapping.getValue().getIds(), numPartitions);
+        JavaRDD<Integer> vertices = sc.parallelize(pVertices, numPartitions);
         long parallelize = System.currentTimeMillis();
-        System.out.println("time to parallelize = " + (parallelize - broadcast) +" milliseconds.");
+        logAndPrint("time to parallelize = " + (parallelize - broadcast) +" milliseconds.");
 
         // map call on vertices...
         final ESUAlgorithm counter = new ESUAlgorithm();
 
-        System.out.println("map partitions.");
+        logAndPrint("Starting parallel run: map partitions.");
         JavaRDD<Long> counts = vertices.mapPartitions(new FlatMapFunction<Iterator<Integer>, Long>() {
 
             public Iterable<Long> call(Iterator<Integer> integerIterator) throws Exception {
@@ -106,17 +108,21 @@ public class SparkGenerator implements Serializable {
 
         });
         long extract = System.currentTimeMillis();
-        System.out.println("time to extract = " + (extract - parallelize) +" milliseconds.");
+        logAndPrint("Time to extract = " + (extract - parallelize) +" milliseconds.");
 
-        System.out.println("summing up.");
         long result = counts.reduce(new Function2<Long, Long, Long>() {
             public Long call(Long i, Long j) throws Exception {
                 return i + j;
             }
         });
-        System.out.println("done!");
+        logAndPrint("Done, found [" + result + "] distinct subgraphs.");
         sc.close();
         return result;
+    }
+
+    private void logAndPrint(String t) {
+        Date now = new Date();
+        System.out.println(format.format(now) + " ::tracker print:: " + t);
     }
 
 }
