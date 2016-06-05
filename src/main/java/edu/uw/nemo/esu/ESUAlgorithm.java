@@ -13,23 +13,43 @@ public class ESUAlgorithm implements Serializable {
     public List<int[]> enumerateSubgraphs(Mapping mapping, int size) {
         long start = System.currentTimeMillis();
         Extractor extractor = new Extractor();
-        List<Integer> nodes = mapping.getIds();
-        for (Integer node : nodes) {
-            List<Integer> subGraph = new ArrayList<Integer>();
-            subGraph.add(node);
-            List<Integer> extension = filterGreater(mapping.getNeighbours(node), node);
-            extendSubgraph(mapping, subGraph, extension, size, extractor);
+        List<Integer> vertices = mapping.getIds();
+        for (Integer vertex : vertices) {
+            enumerateSubgraphs(vertex, mapping, size, extractor);
         }
         System.out.println("enumerate subgraph took " + (System.currentTimeMillis() - start) + " milliseconds.");
 
         return extractor.getSubgraphs();
     }
 
-    public void enumerateSubgraphs(Integer vertex, Mapping mapping, int size, Collector collector) {
+    public void enumerateSubgraphs(Integer root, Mapping mapping, int size, Collector collector) {
         List<Integer> subGraph = new ArrayList<Integer>();
-        subGraph.add(vertex);
-        List<Integer> extension = filterGreater(mapping.getNeighbours(vertex), vertex);
-        extendSubgraph(mapping, subGraph, extension, size, collector);
+        subGraph.add(root);
+        List<Integer> extension = filterGreater(mapping.getNeighbours(root), root);
+        extendSubgraph(subGraph, extension, root, size, mapping, collector);
+    }
+
+    private void extendSubgraph(List<Integer> subGraph, List<Integer> extension, Integer root, int size, Mapping mapping,
+                                Collector collector) {
+        int currentSize = subGraph.size();
+        if (currentSize >= size) {
+            int[] x = new int[size];
+            for (int i = 0; i < size; i++) {
+                x[i] = subGraph.get(i);
+            }
+            collector.add(x);
+        } else {
+            while (extension.size() > 0) {
+                int current = extension.get(0);
+                extension.remove(0);
+                Set<Integer> nExt = new HashSet<Integer>(extension);
+                nExt.addAll(filterGreater(getExclusiveNeighbours(mapping, subGraph, current), root));
+                nExt.remove(current);
+                List<Integer> newSubgraph = new ArrayList<Integer>(subGraph);
+                newSubgraph.add(current);
+                extendSubgraph(newSubgraph, new ArrayList<Integer>(nExt), root, size, mapping, collector);
+            }
+        }
     }
 
     private List<Integer> filterGreater(List<Integer> neighbours, Integer node) {
@@ -40,30 +60,6 @@ public class ESUAlgorithm implements Serializable {
             }
         }
         return filetered;
-    }
-
-    private void extendSubgraph(Mapping mapping, List<Integer> subGraph
-            , List<Integer> extension, int size, Collector collector) {
-        int currentSize = subGraph.size();
-        if (currentSize >= size) {
-            int[] x = new int[size];
-            for (int i = 0; i < size; i++) {
-                x[i] = subGraph.get(i);
-            }
-            collector.add(x);
-        } else {
-            Integer root = subGraph.get(0);
-            while (extension.size() > 0) {
-                int vertex = extension.get(0);
-                extension.remove(0);
-                Set<Integer> nExt = new HashSet<Integer>(extension);
-                nExt.addAll(filterGreater(getExclusiveNeighbours(mapping, subGraph, vertex), root));
-                nExt.remove(vertex);
-                subGraph.add(vertex);
-                extendSubgraph(mapping, subGraph, new ArrayList<Integer>(nExt), size, collector);
-                subGraph.remove(subGraph.size() - 1);
-            }
-        }
     }
 
     private List<Integer> getExclusiveNeighbours(Mapping mapping, List<Integer> subGraph, int node) {

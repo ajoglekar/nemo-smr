@@ -9,7 +9,7 @@ import edu.uw.nemo.model.Mapping;
 public class NullESUAlgorithm extends ESUAlgorithm {
 
     @Override
-    public void enumerateSubgraphs(Integer vertex, Mapping mapping, int size, Collector collector) {
+    public void enumerateSubgraphs(Integer root, Mapping mapping, int size, Collector collector) {
         collector.add(new int[size]);
     }
 

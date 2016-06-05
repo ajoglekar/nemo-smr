@@ -127,12 +127,18 @@ public class SparkGenerator implements Serializable {
         long endExtract = System.currentTimeMillis();
         logAndPrint("Time to extract = " + (endExtract - startExtract) +" milliseconds.");
 
+        counts.cache();
+
         long result = counts.values().reduce(new Function2<Long, Long, Long>() {
             public Long call(Long i, Long j) throws Exception {
                 return i + j;
             }
         });
         logAndPrint("Done, found [" + result + "] distinct subgraphs.");
+
+        // write the file out to bucket
+       // counts.saveAsTextFile("/generated/temp.txt");
+
         return result;
     }
 
