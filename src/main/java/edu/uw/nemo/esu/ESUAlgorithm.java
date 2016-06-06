@@ -1,12 +1,13 @@
 package edu.uw.nemo.esu;
 
 import edu.uw.nemo.model.Mapping;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.broadcast.Broadcast;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ESUAlgorithm implements Serializable {
 
@@ -29,6 +30,25 @@ public class ESUAlgorithm implements Serializable {
         extendSubgraph(subGraph, extension, root, size, mapping, collector);
     }
 
+    public void enumerateSubgraphsS(Integer root, Broadcast<Mapping> mapping, int size, Collector collector, JavaSparkContext sc) {
+        List<Integer> subGraph = new ArrayList<Integer>();
+        subGraph.add(root);
+        List<Integer> extension = filterGreater(mapping.getValue().getNeighbours(root), root);
+        if (extension.size() > 5) {
+            JavaRDD<Integer> extRDD = sc.parallelize(extension, (extension.size() / 5));
+            JavaRDD<Integer[]> subgraphRDD = extRDD.mapPartitions(new FlatMapFunction<Iterator<Integer>, Integer[]>() {
+                public Iterable<Integer[]> call(Iterator<Integer> integerIterator) throws Exception {
+                    ArrayList<Integer[]> counts = new ArrayList<Integer[]>();
+
+                    return counts;
+                }
+            });
+            Long count = subgraphRDD.count();
+        } else {
+            extendSubgraph(subGraph, extension, root, size, mapping.getValue(), collector);
+        }
+    }
+
     private void extendSubgraph(List<Integer> subGraph, List<Integer> extension, Integer root, int size, Mapping mapping,
                                 Collector collector) {
         int currentSize = subGraph.size();
@@ -39,15 +59,15 @@ public class ESUAlgorithm implements Serializable {
             }
             collector.add(x);
         } else {
-            while (extension.size() > 0) {
-                int current = extension.get(0);
-                extension.remove(0);
-                Set<Integer> nExt = new HashSet<Integer>(extension);
-                nExt.addAll(filterGreater(getExclusiveNeighbours(mapping, subGraph, current), root));
-                nExt.remove(current);
-                List<Integer> newSubgraph = new ArrayList<Integer>(subGraph);
-                newSubgraph.add(current);
-                extendSubgraph(newSubgraph, new ArrayList<Integer>(nExt), root, size, mapping, collector);
+            Map<Integer, List<Integer>> extMap = listToMap(extension);
+            for (Map.Entry<Integer, List<Integer>> extEntry : extMap.entrySet()) {
+                    int current = extEntry.getKey();
+                    Set<Integer> nExt = new HashSet<Integer>(extEntry.getValue());
+                    nExt.addAll(filterGreater(getExclusiveNeighbours(mapping, subGraph, current), root));
+                    nExt.remove(current);
+                    List<Integer> newSubgraph = new ArrayList<Integer>(subGraph);
+                    newSubgraph.add(current);
+                    extendSubgraph(newSubgraph, new ArrayList<Integer>(nExt), root, size, mapping, collector);
             }
         }
     }
@@ -60,6 +80,22 @@ public class ESUAlgorithm implements Serializable {
             }
         }
         return filetered;
+    }
+
+    Map<Integer, List<Integer>> listToMap(List<Integer> ext) {
+        Map<Integer, List<Integer>> result = new HashMap<Integer, List<Integer>>();
+        for (int i = 0; i < ext.size(); i++) {
+            result.put(ext.get(i), sublist(ext, i));
+        }
+        return result;
+    }
+
+    private List<Integer> sublist(List<Integer> ext, int i) {
+        if (i+1 > ext.size()) {
+            return new ArrayList<Integer>();
+        } else {
+            return ext.subList(i + 1, ext.size());
+        }
     }
 
     private List<Integer> getExclusiveNeighbours(Mapping mapping, List<Integer> subGraph, int node) {

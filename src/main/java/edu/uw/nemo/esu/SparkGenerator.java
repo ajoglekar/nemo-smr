@@ -100,14 +100,14 @@ public class SparkGenerator implements Serializable {
         long parallelize = System.currentTimeMillis();
         logAndPrint("time to parallelize = " + (parallelize - broadcast) +" milliseconds.");
 
-        long result = getCount(esu, mapping, vertices);
+        long result = getCount(esu, mapping, vertices, sc);
 
         sc.close();
         return result;
     }
 
     // map call on vertices...
-    private long getCount(final ESUAlgorithm esu, final Broadcast<Mapping> mapping, JavaRDD<Integer> vertices) {
+    private long getCount(final ESUAlgorithm esu, final Broadcast<Mapping> mapping, JavaRDD<Integer> vertices, final JavaSparkContext sc) {
         logAndPrint("Starting parallel run: map partitions.");
         long startExtract = System.currentTimeMillis();
         JavaPairRDD<Integer, Long> counts = vertices.mapPartitionsToPair(new PairFlatMapFunction<Iterator<Integer>, Integer, Long>() {
